@@ -1,0 +1,17 @@
+name: pre-commit
+description: run pre-commit
+inputs:
+  extra_args:
+    description: options to pass to pre-commit run
+    required: false
+    default: '--all-files'
+runs:
+  using: composite
+  steps:
+  - uses: hynek/setup-cached-uv@v2
+  - uses: actions/cache@v4
+    with:
+      path: ~/.cache/pre-commit
+      key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+  - run: uv run --with pre-commit-uv pre-commit run --show-diff-on-failure --color=always ${{ inputs.extra_args }}
+    shell: bash
